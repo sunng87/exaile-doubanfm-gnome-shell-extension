@@ -20,9 +20,8 @@ _myButton.prototype = {
         PanelMenu.Button.prototype._init.call(this, 0.0);
         this._label = new St.Label({ style_class: 'panel-label', text: _("DoubanFM") });
         this.actor.set_child(this._label);
-        Main.panel._leftBox.add(this.actor, { y_fill: true });
 
-        this._labels = new PopupMenu.PopupMenuItem(_('Current Playing...'));
+        this._labels = new PopupMenu.PopupMenuItem(_('Stopped'));
         this.menu.addMenuItem(this._labels);
 
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
@@ -61,11 +60,29 @@ _myButton.prototype = {
     },
 
     setCurrentPlaying: function(title, artist, channel, fav){
-        this._labels.label.text = "Current Playing...\n"+artist+": "+title+"\n"+channel+" Channel";
+        this._labels.label.text = "Current Playing...\n"+title+"\n"+artist+"\n"+channel;
         if(fav == "1") {
             this._favorite.label.style_class = 'red';
         } else {
             this._favorite.label.style_class = null;
+        }
+    },
+
+    setAsStopped: function() {
+        this._labels.label.text = "Stopped";
+    },
+
+    show: function() {
+        if (!this.on){
+            this.on = true
+            Main.panel._leftBox.add(this.actor, { y_fill: true });
+        }
+    },
+
+    hide: function() {
+        if (this.on){
+            Main.panel._leftBox.remove(2);
+            this.on = false;
         }
     }
 };
@@ -98,15 +115,25 @@ DBus.proxifyPrototype (DoubanFMProxy.prototype,
 var proxy = new DoubanFMProxy();
 proxy.connect('StatusChanged', function(dummy, data){
     let status  = data['Status'];
-    let metadata = data['Metadata'];
+    if (status == 'Playing') {
+        proxy.ui.show()
+        let metadata = data['Metadata'];
 
-    title = metadata['title'];
-    artist = metadata['artist'];
-    channel_name = metadata['channel_name'];
-    fav = metadata['like']
+        title = metadata['title'];
+        artist = metadata['artist'];
+        channel_name = metadata['channel_name'];
+        fav = metadata['like']
 
-    proxy.ui.fav = (fav == '1')
-    proxy.ui.setCurrentPlaying(title, artist, channel_name, fav)
+        proxy.ui.fav = (fav == '1')
+        proxy.ui.setCurrentPlaying(title, artist, channel_name, fav)
+    } else if (status == 'Stop') {
+        proxy.ui.setAsStopped();
+    } else if (status == 'Init') {
+        proxy.ui.show();
+    } else if (status == 'Exit') {
+        proxy.ui.setAsStopped();
+        proxy.ui.hide();
+    }
 });
 
 function main(extensionMeta) {
