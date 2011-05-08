@@ -8,9 +8,10 @@ const _ = imports.gettext.gettext;
 
 
 function _myButton(proxy) {
-    this._init();
+    this.on = false;
     this.proxy = proxy;
     this.proxy.ui = this;
+    this._init();
 }
 
 _myButton.prototype = {
@@ -20,6 +21,8 @@ _myButton.prototype = {
         PanelMenu.Button.prototype._init.call(this, 0.0);
         this._label = new St.Label({ style_class: 'panel-label', text: _("DoubanFM") });
         this.actor.set_child(this._label);
+        Main.panel._leftBox.add(this.actor, { y_fill: true });
+        this.actor.hide();
 
         this._labels = new PopupMenu.PopupMenuItem(_('Stopped'));
         this.menu.addMenuItem(this._labels);
@@ -60,7 +63,7 @@ _myButton.prototype = {
     },
 
     setCurrentPlaying: function(title, artist, channel, fav){
-        this._labels.label.text = "Current Playing...\n"+title+"\n"+artist+"\n"+channel;
+        this._labels.label.text = "Current Playing...\n%s\n%s\n%s".format(title, artist, channel);
         if(fav == "1") {
             this._favorite.label.style_class = 'red';
         } else {
@@ -74,15 +77,17 @@ _myButton.prototype = {
 
     show: function() {
         if (!this.on){
-            this.on = true
-            Main.panel._leftBox.add(this.actor, { y_fill: true });
+            global.log('To Initial DoubanFM Widget');
+            this.on = true;
+            this.actor.show();
         }
     },
 
     hide: function() {
         if (this.on){
-            Main.panel._leftBox.remove(2);
+            global.log('To Destroy DoubanFM Widget');
             this.on = false;
+            this.actor.hide();
         }
     }
 };
