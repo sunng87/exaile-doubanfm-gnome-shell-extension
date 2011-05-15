@@ -24,7 +24,7 @@ _myButton.prototype = {
         Main.panel._leftBox.add(this.actor, { y_fill: true });
         this.actor.hide();
 
-        this._labels = new PopupMenu.PopupMenuItem(_('Stopped'));
+        this._labels = new PopupMenu.PopupMenuItem(_('Stopped'), {reactive: false});
         this.menu.addMenuItem(this._labels);
 
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
@@ -48,7 +48,9 @@ _myButton.prototype = {
         this.proxy.ToggleFavoriteRemote(function(){})
         this.fav = !this.fav;
         if (this.fav) {
+            global.log('fav');
             this._favorite.label.style_class = 'red';
+            global.log('fav2');
         } else {
             this._favorite.label.style_class = null;
         }
@@ -65,8 +67,10 @@ _myButton.prototype = {
     setCurrentPlaying: function(title, artist, channel, fav){
         this._labels.label.text = "Current Playing...\n%s\n%s\n%s".format(title, artist, channel);
         if(fav == "1") {
+            this.fav = true;
             this._favorite.label.style_class = 'red';
         } else {
+            this.fav = false;
             this._favorite.label.style_class = null;
         }
     },
