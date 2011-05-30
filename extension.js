@@ -65,8 +65,9 @@ _myButton.prototype = {
     },
 
     setCurrentPlaying: function(title, artist, channel, fav){
-        html = "Current Playing...\n<b>%s</b>\n%s\n%s".format(title, artist, channel);
-        this._labels.label.text = html;
+        html = "Current Playing...<br/><b>%s</b></br/>%s<br/>%s".format(title, artist, channel);
+        this._labels.label.clutter_text.set_markup(html);
+        global.log(html)
         //this._labels.label.clutter_text.markup = html
         if(fav == "1") {
             this.fav = true;
