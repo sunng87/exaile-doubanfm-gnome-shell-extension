@@ -49,10 +49,12 @@ _myButton.prototype = {
         this.fav = !this.fav;
         if (this.fav) {
             global.log('fav');
-            this._favorite.label.style_class = 'red';
+            this._favorite.label.add_style_class_name('red');
+            //this._favorite.label.style_class = 'red';
             global.log('fav2');
         } else {
-            this._favorite.label.style_class = null;
+            this._favorite.label.remove_style_class_name('red');
+            //this._favorite.label.style_class = null;
         }
     },
 
@@ -65,16 +67,16 @@ _myButton.prototype = {
     },
 
     setCurrentPlaying: function(title, artist, channel, fav){
-        html = "Current Playing...<br/><b>%s</b></br/>%s<br/>%s".format(title, artist, channel);
-        this._labels.label.clutter_text.set_markup(html);
+        html = "Current Playing...\n%s\n%s\n%s".format(title, artist, channel);
+        this._labels.label.text = html;
         global.log(html)
         //this._labels.label.clutter_text.markup = html
         if(fav == "1") {
             this.fav = true;
-            this._favorite.label.style_class = 'red';
+            this._favorite.label.add_style_class_name('red');
         } else {
             this.fav = false;
-            this._favorite.label.style_class = null;
+            this._favorite.label.remove_style_class_name('red');
         }
     },
 
