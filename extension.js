@@ -6,7 +6,6 @@ const PopupMenu = imports.ui.popupMenu;
 const PanelMenu = imports.ui.panelMenu;
 const _ = imports.gettext.gettext;
 
-
 function _myButton(proxy) {
     this.on = false;
     this.proxy = proxy;
@@ -20,7 +19,7 @@ _myButton.prototype = {
     _init: function() {
         PanelMenu.Button.prototype._init.call(this, 0.0);
         this._label = new St.Label({ style_class: 'panel-label', text: _("DoubanFM") });
-        this.actor.set_child(this._label);
+        this.actor.add_actor(this._label);
         Main.panel._leftBox.add(this.actor, { y_fill: true });
         this.actor.hide();
 
@@ -40,6 +39,7 @@ _myButton.prototype = {
         this._delete = new PopupMenu.PopupMenuItem(_('Delete'));
         this.menu.addMenuItem(this._delete);
         this._delete.connect('activate', Lang.bind(this, this._onDeleteClicked));
+        Main.panel._menus.addMenu(this.menu);
     },
 
     _onDestroy: function() {},
@@ -150,7 +150,12 @@ proxy.connect('StatusChanged', function(dummy, data){
     }
 });
 
-function main(extensionMeta) {
+function enable() {
+
+}
+function disable(){
+}
+function  init(extensionMeta) {
     let _myPanelButton = new _myButton(proxy);
 }
 
