@@ -1,5 +1,8 @@
 /* Example stylesheet */
 .red {
-    color:red;
+    color:red !important;
+}
+b {
+   font-weight:bold !important;
 }
 
