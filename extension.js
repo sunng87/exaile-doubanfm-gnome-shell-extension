@@ -8,10 +8,9 @@ const _ = imports.gettext.gettext;
 
 ExaileDoubanFMButton = function   () {
   this.on = false;
-  this.proxy = new DoubanFMProxy();
-  this.proxy.ui = this;
+  this.proxy = new DoubanFMProxy(this);
   this._init();
-}
+};
 
 ExaileDoubanFMButton.prototype = {
   __proto__: PanelMenu.Button.prototype,
@@ -20,7 +19,6 @@ ExaileDoubanFMButton.prototype = {
     PanelMenu.Button.prototype._init.call(this, 0.0);
     this._label = new St.Label({ style_class: 'panel-label', text: _("DoubanFM") });
     this.actor.add_actor(this._label);
-
     this.actor.hide();
 
     this.cover = new St.Bin({});
@@ -104,13 +102,13 @@ ExaileDoubanFMButton.prototype = {
       this.on = false;
       this.actor.hide();
     }
-  }
+  },
 
   enable: function() {
     Main.panel._leftBox.add(this.actor, { y_fill: true });
     Main.panel._menus.addMenu(this.menu);
     this.proxy.open();
-  }
+  },
 
   disable: function() {
     Main.panel._menus.removeMenu(this.menu);
@@ -119,9 +117,9 @@ ExaileDoubanFMButton.prototype = {
   }
 };
 
-function DoubanFMProxy() {
+function DoubanFMProxy(ui) {
   this._init();
-  this.ui = null;
+  this.ui = ui;
   this.dbus_id = null;
 }
 
@@ -130,12 +128,13 @@ DoubanFMProxy.prototype = {
     DBus.session.proxifyObject (this,
 				'info.sunng.ExaileDoubanfm.instance',
 				'/info/sunng/ExaileDoubanfm');
-  }
+  },
   open: function() {
+    let self = this;
     this.dbus_id = this.connect('StatusChanged', function(dummy, data){
       let status  = data['Status'];
       if (status == 'Playing') {
-        proxy.ui.show()
+        self.ui.show()
         let metadata = data['Metadata'];
 
         title = metadata['title'];
@@ -144,18 +143,18 @@ DoubanFMProxy.prototype = {
         fav = metadata['like']
         album_art = metadata['cover_url']
 
-        proxy.ui.fav = (fav == '1')
-        proxy.ui.setCurrentPlaying(title, artist, channel_name, album_art, fav)
+        self.ui.fav = (fav == '1')
+        self.ui.setCurrentPlaying(title, artist, channel_name, album_art, fav)
       } else if (status == 'Stop') {
-        proxy.ui.setAsStopped();
+        self.ui.setAsStopped();
       } else if (status == 'Init') {
-        proxy.ui.show();
+        self.ui.show();
       } else if (status == 'Exit') {
-        proxy.ui.setAsStopped();
-        proxy.ui.hide();
+        self.ui.setAsStopped();
+        self.ui.hide();
       }
     });
-  }
+  },
   close: function() {
     if (this.dbus_id) {
       this.disconnect(this.dbus_id);
