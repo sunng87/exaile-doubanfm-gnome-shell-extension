@@ -21,7 +21,8 @@ ExaileDoubanFMButton.prototype = {
     this.actor.add_actor(this._label);
     this.actor.hide();
 
-    this.cover = new St.Bin({});
+    this.cover = new St.Bin({style_class: 'album_cover'});
+    this.cover._size = 96;
     this.menu.addActor(this.cover);
 
     this._labels = new PopupMenu.PopupMenuItem(_('Stopped'), {reactive: false});
@@ -37,7 +38,7 @@ ExaileDoubanFMButton.prototype = {
     this._skip.connect('activate', Lang.bind(this, this._onSkipClicked));
     this.menu.addMenuItem(this._skip);
 
-    this._delete = new PopupMenu.PopupMenuItem(_('Delete'));
+    this._delete = new PopupMenu.PopupMenuItem(_('Trash'));
     this._delete.connect('activate', Lang.bind(this, this._onDeleteClicked));
     this.menu.addMenuItem(this._delete);
 
@@ -74,7 +75,9 @@ ExaileDoubanFMButton.prototype = {
 
     textureCache = St.TextureCache.get_default();
     this.cover.set_child(
-      textureCache.load_uri_async(album_art, 120, 120));
+      textureCache.load_uri_async(album_art, 
+                                  this.cover._size,
+                                  this.cover._size));
 
     //this._labels.label.clutter_text.markup = html
     if(fav == "1") {

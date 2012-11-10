@@ -5,4 +5,8 @@
 b {
    font-weight:bold !important;
 }
+.album_cover {
+   width:96px;
+   height:96px;
+}
 
