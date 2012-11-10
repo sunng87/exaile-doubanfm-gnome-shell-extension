@@ -6,7 +6,7 @@ const PopupMenu = imports.ui.popupMenu;
 const PanelMenu = imports.ui.panelMenu;
 const _ = imports.gettext.gettext;
 
-ExaileDoubanFMButton = function   () {
+const ExaileDoubanFMButton = function   () {
   this.on = false;
   this.proxy = new DoubanFMProxy(this);
   this._init();
@@ -105,13 +105,13 @@ ExaileDoubanFMButton.prototype = {
   },
 
   enable: function() {
-    Main.panel._leftBox.add(this.actor, { y_fill: true });
-    Main.panel._menus.addMenu(this.menu);
+    Main.panel._addToPanelBox('douban-fm', this, -1, Main.panel._leftBox);
+    Main.panel.menuManager.addMenu(this.menu);
     this.proxy.open();
   },
 
   disable: function() {
-    Main.panel._menus.removeMenu(this.menu);
+    Main.panel.menuManager.removeMenu(this.menu);
     Main.panel._leftBox.remove_actor(this.actor);
     this.proxy.close();
   }
@@ -176,7 +176,7 @@ DBus.proxifyPrototype (DoubanFMProxy.prototype,
 
 
 
-function init(extensionMeta) {
+function init() {
   return new ExaileDoubanFMButton();
 }
 
