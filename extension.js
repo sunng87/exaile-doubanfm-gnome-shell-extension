@@ -108,14 +108,14 @@ ExaileDoubanFMButton.prototype = {
   },
 
   enable: function() {
-    Main.panel._addToPanelBox('douban-fm', this, -1, Main.panel._leftBox);
+    Main.panel.addToStatusArea('douban-fm', this, -1, 'left');
     Main.panel.menuManager.addMenu(this.menu);
     this.proxy.open();
   },
 
   disable: function() {
-    Main.panel.menuManager.removeMenu(this.menu);
-    Main.panel._leftBox.remove_actor(this.actor);
+    this.menu.destroy();
+    this.destroy();
     this.proxy.close();
   }
 };
